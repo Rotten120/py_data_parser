@@ -25,6 +25,33 @@ def read_str(line):
         idx += 1
     return stack[1]
 
+def read_file(file_path):
+    file = open(file_path, 'r')
+    lines = file.read().split('\n')
+
+    stack = []
+    idx = 0
+
+    while idx + 1 < len(lines):
+        line = lines[idx].lstrip()
+        if line == '}':
+            stack[-2].append(stack[-1])
+            stack.pop()
+            idx += 1
+            continue
+            
+        key = find_string(line)
+        item = line[len(key) + 4:]
+        arg = [key, item]
+
+        if item == '{':
+            empty_li = []
+            stack.append(empty_li)
+        else:
+            stack[-1].append(arg)
+        idx += 1
+    return stack[0]
+
 def read(file_path):
     file = open(file_path, 'r')
     lines = file.read().split('\n')
@@ -45,9 +72,10 @@ def read(file_path):
             keys = list(stack.keys())
             stack[keys[-2]][keys[-1]] = stack.pop(keys[-1])
         else:
-            stack[key] = item
+            keys = list(stack.keys())
+            stack[keys[-1]] = item
         idx += 1
     return stack
 
 if __name__ == "__main__":
-    print(read("quiz_data.txt"))   
+    print(read_file("quiz_data.txt"))   
